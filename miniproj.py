@@ -15,30 +15,45 @@ ldap:36 bgp:37 courier:38 ssh:39 IRC:40 iso_tsap:41"""
 x={0: "DOS: denial-of-service, e.g. syn flood; (attack)",1: "normal (no attack)",2: "probing: surveillance and other probing, e.g., port scanning (attack)",
 3: "R2L: unauthorized access from a remote machine, e.g. guessing password (attack)",
 4: "U2R: unauthorized access to local superuser (root) privileges, e.g., various 'buffer overflow' attacks (attack)"}
-df = pd.read_csv (r'C:\Users\Akhil\Desktop\testing.csv')
+df = pd.read_csv (r'C:\Users\Akhil\Desktop\mini proj\testing.csv',low_memory=False)
 
-dt=pd.read_csv(r'C:\Users\Akhil\Desktop\training.csv')
-x_feat=dt.iloc[:,1:42]
+dt=pd.read_csv(r'C:\Users\Akhil\Desktop\mini proj\training.csv',low_memory=False)
+x_feat=dt.iloc[:,3:42]
 y_feat=dt.iloc[:,42]
 
-x_feat=np.array(x_feat)
-y_feat=np.array(y_feat)
-print(x_feat[0])
-
+X_train, X_test, y_train, y_test = train_test_split(x_feat, y_feat, test_size=0.33, random_state=1 )
+y_test = np.nan_to_num(y_test)
+X_test = np.nan_to_num(X_test)
+y_train = np.nan_to_num(y_train)
+X_train = np.nan_to_num(X_train)
+X_train = np.asarray(X_train).astype('float32')
+y_train = np.asarray(y_train).astype('float32')
+X_test = np.asarray(X_test).astype('float32')
+y_test = np.asarray(y_test).astype('float32')
 
 model = Sequential()
-model.add(Dense(128, input_shape=(449940, 40), activation='relu'))
+model.add(Dense(128, input_dim=39, activation='relu'))
 model.add(Dropout(0.5))
 model.add(Dense(64, activation='relu'))
 model.add(Dropout(0.5))
-model.add(Dense(5, activation='softmax'))
-sgd = SGD(lr=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-model.fit(x_feat, y_feat, epochs=200, batch_size=5, verbose=1)
+model.add(Dense(32, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(5, activation='relu'))
+model.add(Dropout(0.5))
+model.add(Dense(1, activation='softmax'))
+sgd = SGD(learning_rate=0.05, decay=1e-6, momentum=0.9, nesterov=True)
+model.compile(loss='binary_crossentropy', optimizer=sgd, metrics=['accuracy'])
+hist=model.fit(X_train, y_train, epochs=10, batch_size=10, verbose=1)
 
-y_pred =model.predict(x_test)
+model.save('IDS.h5', hist)
+y_pred =model.predict(X_test)
+y_pred = np.nan_to_num(y_pred)
 
 accuracy=accuracy_score(y_true=y_test, y_pred=y_pred)
 print("Accuracy: {:.2f}%".format(accuracy*100))
+
+
+
+
 
 
