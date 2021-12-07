@@ -5,6 +5,7 @@ from keras.utils import np_utils
 from keras.models import Sequential
 from keras.layers import Dense, Activation, Dropout
 from keras.optimizers import SGD
+import joblib
 import pandas as pd
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import train_test_split
@@ -32,18 +33,21 @@ dummy_y = np_utils.to_categorical(y_train)
 
 X_test = np.asarray(X_test).astype('float32')
 
-dummy_y1 = np_utils.to_categorical(y_test)
-model=MLPClassifier(alpha=0.01, batch_size=256, epsilon=1e-08, hidden_layer_sizes=(300,), learning_rate='adaptive', max_iter=500)
+# dummy_y1 = np_utils.to_categorical(y_test)
+# model=MLPClassifier(alpha=0.01, batch_size=256, epsilon=1e-08, hidden_layer_sizes=(300,), learning_rate='adaptive', max_iter=500)
 
-model.fit(X_train,y_train)
-
+# hist=model.fit(X_train,y_train)
+# y_pred =model.predict(X_test)
+# filename = 'IDS.sav'
+# joblib.dump(model, filename)
+filename = 'IDS.sav'
+model = joblib.load(filename)
 y_pred =model.predict(X_test)
-
 accuracy=accuracy_score(y_true=y_test, y_pred=y_pred)
 print("Accuracy: {:.2f}%".format(accuracy*100))
 y_pred =model.predict(X_test[59:60])
 print(y_pred)
-print(x[y_pred])
+print(x[y_pred[0]])
 print(y_test[59:60])
 
 # model = Sequential()
