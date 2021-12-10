@@ -1,4 +1,6 @@
+import keras
 from keras.backend import shape
+
 from sklearn.neural_network import MLPClassifier
 import numpy as np
 from keras.utils import np_utils
@@ -33,43 +35,53 @@ dummy_y = np_utils.to_categorical(y_train)
 
 X_test = np.asarray(X_test).astype('float32')
 
-# dummy_y1 = np_utils.to_categorical(y_test)
+dummy_y1 = np_utils.to_categorical(y_test)
 # model=MLPClassifier(alpha=0.01, batch_size=256, epsilon=1e-08, hidden_layer_sizes=(300,), learning_rate='adaptive', max_iter=500)
 
 # hist=model.fit(X_train,y_train)
 # y_pred =model.predict(X_test)
 # filename = 'IDS.sav'
 # joblib.dump(model, filename)
-filename = 'IDS.sav'
-model = joblib.load(filename)
-y_pred =model.predict(X_test)
-accuracy=accuracy_score(y_true=y_test, y_pred=y_pred)
-print("Accuracy: {:.2f}%".format(accuracy*100))
-y_pred =model.predict(X_test[59:60])
-print(y_pred)
-print(x[y_pred[0]])
-print(y_test[59:60])
+# filename = 'IDS.sav'
+# model = joblib.load(filename)
+# y_pred =model.predict(X_test)
+# accuracy=accuracy_score(y_true=y_test, y_pred=y_pred)
+# print("Accuracy: {:.2f}%".format(accuracy*100))
+# y_pred =model.predict(X_test[59:60])
+# print(y_pred)
+# print(x[y_pred[0]])
+# print(y_test[59:60])
 
 # model = Sequential()
-# model.add(Dense(128, input_dim=41, activation='relu'))
+# model.add(Dense(126, input_dim=41, activation='relu'))
+# model.add(Dropout(0.5))
+# model.add(Dense(89, activation='relu'))
 # model.add(Dropout(0.5))
 # model.add(Dense(64, activation='relu'))
 # model.add(Dropout(0.5))
-# model.add(Dense(32, activation='relu'))
+# model.add(Dense(48, activation='relu'))
 # model.add(Dropout(0.5))
-# model.add(Dense(8, activation='relu'))
+# model.add(Dense(36, activation='relu'))
 # model.add(Dropout(0.5))
 # model.add(Dense(5, activation='softmax'))
 # sgd = SGD(learning_rate=0.01, decay=1e-6, momentum=0.9, nesterov=True)
-# model.compile(loss='categorical_crossentropy', optimizer=sgd, metrics=['accuracy'])
-# hist=model.fit(X_train, dummy_y, epochs=300, batch_size=256, verbose=1)
-
+# model.compile(loss='mean_absolute_error', optimizer=sgd, metrics=['accuracy'])
+# hist=model.fit(X_train, dummy_y, epochs=10, batch_size=256, verbose=1)
 # model.save('IDS.h5', hist)
-# score=model.evaluate(X_test,dummy_y1,batch_size=100)
-# print(score)
-# y_pred =model.predict(X_test[59])
-# print(y_pred)
-# print(dummy_y1[59])
+model=keras.models.load_model(
+    'IDS.h5',
+    custom_objects=None, compile=True)
+score=model.evaluate(X_test,dummy_y1,batch_size=100)
+print(score)
+y_pred =model.predict(X_test)[59]
+print(y_pred)
+print(dummy_y1[59])
+s=0
+for i in y_pred:
+    if(i==1):
+        s=+1
+        print(x[s])
+    s=+1
 
 
 
